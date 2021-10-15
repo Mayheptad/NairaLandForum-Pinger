@@ -53,7 +53,7 @@ try{
   page.waitForNavigation(), 
   ]) 
   
-  await page.goto('https://www.nairaland.com/followed');
+   await Promise.all([page.goto('https://www.nairaland.com/followed'), page.waitForNavigation()]);
   
    let postArr = await page.evaluate( _ => { 
 	  var temArr = [];
