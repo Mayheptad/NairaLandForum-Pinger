@@ -53,7 +53,7 @@ try{
   page.waitForNavigation(), 
   ]) 
   
-   await Promise.all([page.goto('https://www.nairaland.com/followed'), page.waitForNavigation()]);
+   await Promise.all([page.goto('https://www.nairaland.com/followed', {waitUntil: 'networkidle2',}), page.waitForNavigation()]);
   
    let postArr = await page.evaluate( _ => { 
 	  var temArr = [];
@@ -71,7 +71,7 @@ try{
 		 
 	 for(i = 0; i < len; i++) {
 		 
-   await Promise.all([page.goto(postArr[i]), page.waitForNavigation()])
+   await Promise.all([page.goto(postArr[i]), page.waitForNavigation()]);
 		
    const replyBtnUrl = await page.evaluate( _ => document.querySelector("body > div > div.nocopy > p:nth-child(1) > a:nth-child(2)").href, 60000);
    	//console.log(replyBtnUrl)
