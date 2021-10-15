@@ -33,9 +33,11 @@ const nlSchema = mongoose.Schema({
  let postPingTime; let nlModel;
 
 async function updateNl(){
-
+	
 try{
-  const browser = await puppeteer.launch({headless: false, slowMo: 250});
+  const browser = await puppeteer.launch({
+ /*headless: false*/args: ['--no-sandbox'], slowMo: 250
+	  });
   const page = await browser.newPage();
   await page.setViewport({width: 1200, height: 720})
   //throw Error('intetionaly trow error to trigger catch block')
