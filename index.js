@@ -22,7 +22,7 @@ switch(convertDate.getMonth()){ case 0: thisMonth = "january"; break; case 1: th
 
 //create a db collection, name it using today date & month in nigeria timezone
  const nlModelName = thisMonth+"_"+convertDate.getDate();
-
+//mongodb+srv://admin-bill:harbey1994@cluster0.ea0lo.mongodb.net/nairalandDB?retryWrites=true&w=majority
 mongoose.connect('mongodb+srv://admin-bill:harbey1994@cluster0.ea0lo.mongodb.net/nairalandDB?retryWrites=true&w=majority');
 //mongoose.connect('mongodb://localhost:27017/nlDB');
 
@@ -36,7 +36,7 @@ async function updateNl(){
 	
 try{
   const browser = await puppeteer.launch({
- /*headless: false*/args: ['--no-sandbox'], slowMo: 250
+	 /*headless: false,*/args: ['--no-sandbox'], slowMo: 250
 	  });
   const page = await browser.newPage();
   await page.setViewport({width: 1200, height: 720})
@@ -65,26 +65,26 @@ try{
 			
 		return temArr;  
 	}, 60000);
-		 
+	//console.log(postArr)
 		 var i;
 		 var len = postArr.length;
 		 
 	 for(i = 0; i < len; i++) {
 		 
-    await page.goto(postArr[i]);
-	
-	const replyBtnUrl = await page.evaluate( _ => document.querySelector("body > div > div.nocopy > p:nth-child(1) > a:nth-child(2)").href, 60000);
-  
-   await page.goto(replyBtnUrl);
-   
-  const str = ['Always visit ', 'Go to ', 'Kindly visit ', "Don't forget to Visit ", 'Endeavour to visit ', 'Click '];
-  const randNum = Math.floor(Math.random() * 400) + 1;
-  const randStr = Math.floor(Math.random() * str.length);
-  
+   await Promise.all([page.goto(postArr[i]), page.waitForNavigation()])
+		
+   const replyBtnUrl = await page.evaluate( _ => document.querySelector("body > div > div.nocopy > p:nth-child(1) > a:nth-child(2)").href, 60000);
+   	//console.log(replyBtnUrl)
+   if(replyBtnUrl.startsWith("https://www.nairaland.com/newpost?topic=")){
+   await Promise.all([page.goto(replyBtnUrl), page.waitForNavigation()]);
+   const str = ['Always visit ', 'Go to ', 'Kindly visit ', "Don't forget to Visit ", 'Endeavour to visit ', 'Click '];
+   const randNum = Math.floor(Math.random() * 400) + 1;
+   const randStr = Math.floor(Math.random() * str.length);
    await page.type('#body', `${str[randStr]} https://onenewspace.com/read-blog/${randNum} for the best, latest, trending news and entertainment info`)
-  
-   await page.click('input[value="Submit"]');
-  
+   await Promise.all([page.click('input[value="Submit"]'), page.waitForNavigation()])
+   }else{
+	   continue;
+   }
 };
      await browser.close(); 
 
@@ -115,7 +115,7 @@ try{
 setTimeout( _ => updateNl(), 300000)
 
 const pingHome = function(){
-  fetch("/")
+  fetch("https://hidden-wave-05524.herokuapp.com")
   .then(res => res.text())
     .then(body => console.log(body))
     .catch(err => console.error(err));
