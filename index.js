@@ -11,18 +11,12 @@ const server = http.createServer((request, response)=>{
 });
 
      //convert time to nigeria timezone 
-  function convertTZ(date, tzString) {
+  function convertTZ(date, tzString){
     return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
 }
-const convertDate = convertTZ(new Date(),"Africa/Lagos");
 
-//change convert getMonth() to human readable formart
- var thisMonth;
-switch(convertDate.getMonth()){ case 0: thisMonth = "january"; break; case 1: thisMonth = "february"; break; case 2: thisMonth = "march"; break; case 3: thisMonth = "april"; break; case 4: thisMonth = "may"; break; case 5: thisMonth = "june"; break; case 6: thisMonth = "july"; break; case 7: thisMonth = "august"; break; case 8: thisMonth = "september"; break; case 9: thisMonth = "octomber"; break; case 10: thisMonth = "november"; break; case 11: thisMonth = "december"; break; default: thisMonth = "invalid_month";} 
+  let convertDate;
 
-//create a db collection, name it using today date & month in nigeria timezone
- const nlModelName = thisMonth+"_"+convertDate.getDate();
-//mongodb+srv://admin-bill:harbey1994@cluster0.ea0lo.mongodb.net/nairalandDB?retryWrites=true&w=majority
 mongoose.connect('mongodb+srv://admin-bill:harbey1994@cluster0.ea0lo.mongodb.net/nairalandDB?retryWrites=true&w=majority');
 //mongoose.connect('mongodb://localhost:27017/nlDB');
 
@@ -30,30 +24,25 @@ const nlSchema = mongoose.Schema({
 	Time:String, done: String
 })
 
- let postPingTime; let nlModel;
+ let postPingTime; let nlModel; let nlModelName; var thisMonth;
 
 async function updateNl(){
 	
 try{
-  const browser = await puppeteer.launch({
-	 /*headless: false,*/args: ['--no-sandbox'], slowMo: 250
-	  });
+  const browser = await puppeteer.launch({/*headless: false,*/ args: ['--no-sandbox'], slowMo: 250});
   const page = await browser.newPage();
   await page.setViewport({width: 1200, height: 720})
-  //throw Error('intetionaly trow error to trigger catch block')
-  await page.goto('https://www.nairaland.com/login',{
-    waitUntil: 'networkidle2',
-  });
+ 
+  await page.goto('https://www.nairaland.com/login',{waitUntil: 'networkidle2',});
  	
   await page.type('input[name="name"]', 'oluwarichy')
   await page.type('input[name="password"]', 'harbey1994')
   
-  await Promise.all([
-  page.click('input[value="Login"]'),
-  page.waitForNavigation(), 
-  ]) 
+  await Promise.all([page.click('input[value="Login"]'), page.waitForNavigation()]) 
   
-   await Promise.all([page.goto('https://www.nairaland.com/followed', {waitUntil: 'networkidle2',}), page.waitForNavigation()]);
+  await Promise.all([page.goto('https://www.nairaland.com/followed', {waitUntil: 'load',}), page.waitForNavigation()]);
+   
+  await page.waitForTimeout(2000);
   
    let postArr = await page.evaluate( _ => { 
 	  var temArr = [];
@@ -65,7 +54,7 @@ try{
 			
 		return temArr;  
 	}, 60000);
-	//console.log(postArr)
+	
 		 var i;
 		 var len = postArr.length;
 		 
@@ -74,22 +63,30 @@ try{
    await Promise.all([page.goto(postArr[i]), page.waitForNavigation()]);
 		
    const replyBtnUrl = await page.evaluate( _ => document.querySelector("body > div > div.nocopy > p:nth-child(1) > a:nth-child(2)").href, 60000);
-   	//console.log(replyBtnUrl)
+   	
    if(replyBtnUrl.startsWith("https://www.nairaland.com/newpost?topic=")){
    await Promise.all([page.goto(replyBtnUrl), page.waitForNavigation()]);
    const str = ['Always visit ', 'Go to ', 'Kindly visit ', "Don't forget to Visit ", 'Endeavour to visit ', 'Click '];
    const randNum = Math.floor(Math.random() * 400) + 1;
    const randStr = Math.floor(Math.random() * str.length);
-   await page.type('#body', `${str[randStr]} https://onenewspace.com/read-blog/${randNum} for the best, latest, trending news and entertainment info`)
+   await page.type('#body', `${str[randStr]} https://onenewspace.com/read-blog/${randNum} for the latest, trending news & entertainment info`)
    await Promise.all([page.click('input[value="Submit"]'), page.waitForNavigation()])
    }else{
 	   continue;
    }
 };
      await browser.close(); 
+	 
+ convertDate = convertTZ(new Date(),"Africa/Lagos");
 
  //get the current time in Nigeria timezone & save it to a variable
  postPingTime = convertDate.getHours()+":"+convertDate.getMinutes()+":"+convertDate.getSeconds();
+ 
+ //change convert getMonth() to human readable formart
+switch(convertDate.getMonth()){ case 0: thisMonth = "january"; break; case 1: thisMonth = "february"; break; case 2: thisMonth = "march"; break; case 3: thisMonth = "april"; break; case 4: thisMonth = "may"; break; case 5: thisMonth = "june"; break; case 6: thisMonth = "july"; break; case 7: thisMonth = "august"; break; case 8: thisMonth = "september"; break; case 9: thisMonth = "octomber"; break; case 10: thisMonth = "november"; break; case 11: thisMonth = "december"; break; default: thisMonth = "invalid_month";} 
+
+//create a db collection, name it using today date & month in nigeria timezone
+  nlModelName = thisMonth+"_"+convertDate.getDate();
 
  nlModel = mongoose.model(nlModelName, nlSchema);
 	 
@@ -101,6 +98,11 @@ try{
 	console.log(err)
 	
 	 //get the current time in Nigeria timezone & save it to a variable
+ convertDate = convertTZ(new Date(),"Africa/Lagos");
+ 
+  //change convert getMonth() to human readable formart
+switch(convertDate.getMonth()){ case 0: thisMonth = "january"; break; case 1: thisMonth = "february"; break; case 2: thisMonth = "march"; break; case 3: thisMonth = "april"; break; case 4: thisMonth = "may"; break; case 5: thisMonth = "june"; break; case 6: thisMonth = "july"; break; case 7: thisMonth = "august"; break; case 8: thisMonth = "september"; break; case 9: thisMonth = "octomber"; break; case 10: thisMonth = "november"; break; case 11: thisMonth = "december"; break; default: thisMonth = "invalid_month";} 
+	 nlModelName = thisMonth+"_"+convertDate.getDate();
  postPingTime = convertDate.getHours()+":"+convertDate.getMinutes()+":"+convertDate.getSeconds();
 
  nlModel = mongoose.model(nlModelName, nlSchema);
@@ -112,7 +114,7 @@ try{
    }
    
 //updateNl() 
-setInterval( _ => updateNl(), 300000)
+setInterval(updateNl, 12*60*1000);
 
 const pingHome = function(){
   fetch("https://hidden-wave-05524.herokuapp.com")
@@ -131,4 +133,4 @@ const pingPlaceHolder = function(){
 setInterval(pingPlaceHolder, 20*60*1000); 
 
 
-server.listen(process.env.PORT || 3000,()=>{console.log("server started succesfully")});
+server.listen(process.env.PORT || 3000,_ =>console.log("server started succesfully"));
