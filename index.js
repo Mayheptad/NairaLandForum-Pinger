@@ -112,7 +112,7 @@ try{
    }
    
 //updateNl() 
-setTimeout( _ => updateNl(), 300000)
+setInterval( _ => updateNl(), 300000)
 
 const pingHome = function(){
   fetch("https://hidden-wave-05524.herokuapp.com")
