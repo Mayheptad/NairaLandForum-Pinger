@@ -114,7 +114,7 @@ switch(convertDate.getMonth()){ case 0: thisMonth = "january"; break; case 1: th
    }
    
 //updateNl() 
-setInterval(updateNl, 12*60*1000);
+setInterval(updateNl, 14*60*1000);
 
 const pingHome = function(){
   fetch("https://hidden-wave-05524.herokuapp.com")
