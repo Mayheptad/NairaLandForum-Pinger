@@ -29,7 +29,7 @@ const nlSchema = mongoose.Schema({
 async function updateNl(){
 	
 try{
-  const browser = await puppeteer.launch({/*headless: false,*/ args: ['--no-sandbox'], slowMo: 250});
+  const browser = await puppeteer.launch({/*headless: false,*/ args: ['--no-sandbox'], slowMo: 200});
   const page = await browser.newPage();
   await page.setViewport({width: 1200, height: 720})
  
@@ -114,7 +114,7 @@ switch(convertDate.getMonth()){ case 0: thisMonth = "january"; break; case 1: th
    }
    
 //updateNl() 
-setInterval(updateNl, 14*60*1000);
+setInterval(updateNl, 15*60*1000);
 
 const pingHome = function(){
   fetch("https://hidden-wave-05524.herokuapp.com")
