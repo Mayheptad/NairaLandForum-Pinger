@@ -12,8 +12,7 @@ import {convertTZ} from './utils.js'
   }
 }); 
 
-mongoose.connect('mongodb+srv://admin-bill:harbey1994@cluster0.ea0lo.mongodb.net/nairalandDB?retryWrites=true&w=majority')
-.catch((err)=>{console.log('Mongodb refuse to connect')});
+mongoose.connect('your mogodb address here').catch((err)=>{console.log('Mongodb refuse to connect')});
 //mongoose.connect('mongodb://localhost:27017/nlDB');
 
 const nlSchema = mongoose.Schema({
@@ -31,8 +30,8 @@ try{
  
   await page.goto('https://www.nairaland.com/login',{waitUntil: 'networkidle2',}).catch((err)=>{browser.close(); throw "browser is unable to visit nairaland login page"});
  	
-  await page.type('input[name="name"]', 'oluwarichy').catch((err)=>{browser.close(); throw "could not type username"});
-  await page.type('input[name="password"]', 'harbey1994').catch((err)=>{browser.close(); throw "could not type password"});
+  await page.type('input[name="name"]', 'your nairaland username here').catch((err)=>{browser.close(); throw "could not type username"});
+  await page.type('input[name="password"]', 'your nairaland password here').catch((err)=>{browser.close(); throw "could not type password"});
   
   await Promise.all([page.click('input[value="Login"]'), page.waitForNavigation()]).catch((err)=>{browser.close(); throw "login not succesfull or navigation timeout"}); //{ waitUntil: 'networkidle0' }
   
